@@ -1,4 +1,3 @@
-open Csv
 module Pc = Process_collection.Process_Collection
 
 let cIN_FILENAME = "input/collection.csv"

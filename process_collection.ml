@@ -80,7 +80,7 @@ module Process_Collection : PROCESS_COLLECTION = struct
       (target_fields : int list) : unit =
     let out_channel = open_out out_filename in
     let first_row = ref true in
-    (* skip the first row, as Manabox will think the CSV headers are card names *)
+    (* skip the first row; Manabox will think the CSV headers are card names *)
     let append_row (row : csv_row) : unit =
       if not !first_row then 
         output_string out_channel

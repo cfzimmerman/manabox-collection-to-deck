@@ -79,9 +79,13 @@ module Process_Collection : PROCESS_COLLECTION = struct
   let generate_output_txt (out_filename : string) (csv : csv)
       (target_fields : int list) : unit =
     let out_channel = open_out out_filename in
+    let first_row = ref true in
+    (* skip the first row, as Manabox will think the CSV headers are card names *)
     let append_row (row : csv_row) : unit =
-      output_string out_channel
-        (list_to_spaced_string (list_target_values row target_fields))
+      if not !first_row then 
+        output_string out_channel
+          (list_to_spaced_string (list_target_values row target_fields))
+      else first_row := false
     in
     Array.iter append_row csv;
     close_out out_channel

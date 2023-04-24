@@ -23,6 +23,6 @@ let process_csv (input_filename : string) (target_cols : string list)
       Pc.txt_deck_from_collection input_filename target_cols output_filename
 
 (* different ways to apply process_csv *)
-let () = process_csv cIN_FILENAME cTARGET_COLUMNS (Csv cCSV_OUT_FILENAME)
+(* let () = process_csv cIN_FILENAME cTARGET_COLUMNS (Csv cCSV_OUT_FILENAME) *)
 (* let () = process_csv cIN_FILENAME cTARGET_COLUMNS Printed *)
-(* let () = process_csv cIN_FILENAME cTARGET_COLUMNS (Txt cTXT_OUT_FILENAME) *)
+let () = process_csv cIN_FILENAME cTARGET_COLUMNS (Txt cTXT_OUT_FILENAME)

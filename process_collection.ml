@@ -17,10 +17,19 @@ module type PROCESS_COLLECTION =
           Similar to print_deck_from_collection
           Generates a CSV at the output location with the fields specified in target_columns
 
-        output_filename:  a failepath/filename ending in .csv.
+        output_filename:  a filepath/filename ending in .csv.
             Ex: deck.csv 
     *)
     val csv_deck_from_collection : string -> string list -> string -> unit
+
+    (* 
+      txt_deck_from_collection: input_filename -> target_columns -> output_filename -> unit
+          Similar to csv_deck_from_collection
+        
+      output_filename: a filepath/filename ending in .txt 
+          Ex: deck.txt
+    *)
+    val txt_deck_from_collection : string -> string list -> string -> unit
   end
 
 
@@ -51,6 +60,27 @@ module Process_Collection: PROCESS_COLLECTION   =
       in
       Array.iter append_row csv;
       Csv.close_out csv_out_channel
+    ;;
+
+    (* list_to_spaced_string: given a list of strings, returns the list as a series
+       of strings separated by spaces. This is how Manabox requires inputs to 
+       be formatted. *)
+    let list_to_spaced_string (fields : string list) : string =
+      let join_elements (acc : string) (str : string) : string = 
+        acc ^ " " ^ str 
+      in
+      (List.fold_left join_elements "" fields) ^ "\n"
+    ;;
+
+    (* generate_output_txt: generates a txt file with the values specified in the target_fields 
+      parameter (in order) with each CSV row saved as a space-separated series of values *)
+    let generate_output_txt (out_filename : string) (csv : csv) (target_fields : int list) : unit =
+      let out_channel = open_out out_filename in 
+      let append_row (row : csv_row) : unit =
+        output_string out_channel (list_to_spaced_string (list_target_values row target_fields))
+      in
+      Array.iter append_row csv;
+      close_out out_channel 
     ;;
 
     (* print_collection: iterates through the CSV printing only the values 
@@ -98,7 +128,11 @@ module Process_Collection: PROCESS_COLLECTION   =
       let input = load_csv input_filename in 
       print_collection input (get_header_col_indices input.(0) target_columns) 
 
-    let csv_deck_from_collection (input_filename : string) (target_columns : string list) (output_filename : string) =
+    let csv_deck_from_collection (input_filename : string) (target_columns : string list) (output_filename : string) : unit =
       let input = load_csv input_filename in
       generate_output_csv output_filename input (get_header_col_indices input.(0) target_columns) 
+
+    let txt_deck_from_collection (input_filename : string) (target_columns : string list) (output_filename : string) : unit =
+      let input = load_csv input_filename in 
+      generate_output_txt output_filename input (get_header_col_indices input.(0) target_columns)
   end
